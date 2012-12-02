@@ -5,14 +5,14 @@ public class GateType {
     private final String name;
     private final int delay;
     private final int interval;
-    private final String permission;
+    private final GateRedstone redstone;
     
-    public GateType(final String name, final int delay, final int interval, final String permission) {
+    public GateType(final String name, final int delay, final int interval, final GateRedstone redstone) {
     
         this.name = name;
         this.delay = delay;
         this.interval = interval;
-        this.permission = permission;
+        this.redstone = redstone;
         
     }
     
@@ -34,9 +34,9 @@ public class GateType {
         
     }
     
-    public String getPermission() {
+    public GateRedstone getRedstone() {
     
-        return this.permission;
+        return this.redstone;
         
     }
     

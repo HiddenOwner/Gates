@@ -1,0 +1,15 @@
+default-type: default
+permission: true
+type:
+    default:
+        delay: 32
+        interval: 32
+        redstone: OFF
+    instant:
+        delay: 0
+        interval: 0
+        redstone: OFF
+    redstone:
+        delay: 32
+        interval: 32
+        redstone: ON

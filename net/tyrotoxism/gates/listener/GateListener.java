@@ -1,15 +1,15 @@
 package net.tyrotoxism.gates.listener;
 
 import net.tyrotoxism.gates.Gate;
-import net.tyrotoxism.gates.GateRedstone;
-import net.tyrotoxism.gates.GateType;
 import net.tyrotoxism.gates.Gates;
 import net.tyrotoxism.gates.event.GateActivationEvent;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class GateListener implements Listener {
@@ -25,7 +25,9 @@ public class GateListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent event) {
     
-        final Gate gate = this.plugin.getGate(event.getClickedBlock(), event.getPlayer(), new GateType("test", 0, 0, "permission"), GateRedstone.OFF);
+        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) { return; }
+        
+        final Gate gate = this.plugin.getGate(event.getClickedBlock(), event.getPlayer());
         
         if (gate == null) { return; }
         
@@ -48,10 +50,13 @@ public class GateListener implements Listener {
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
+    public void onBlockRedstone(final BlockRedstoneEvent event) {
+    
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockBreakEvent(final BlockBreakEvent event) {
     
-        // Check if gate (or gate blocks) and if permitted
-        
     }
     
 }

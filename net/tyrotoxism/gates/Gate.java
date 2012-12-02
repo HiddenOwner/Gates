@@ -15,8 +15,6 @@ public class Gate {
     private final GateType type;
     private final GateRedstone redstone;
     
-    private final String permission;
-    
     private boolean open;
     private boolean ready;
     
@@ -29,10 +27,8 @@ public class Gate {
         this.type = sign.getLine(2).isEmpty() ? null : this.plugin.getType(sign.getLine(2));
         this.redstone = sign.getLine(3).isEmpty() ? null : GateRedstone.valueOf(sign.getLine(3));
         
-        this.permission = "sup";
-        
-        this.ready = true;
         this.open = true;
+        this.ready = true;
         
         // Find the blocks and check if they're used by another gate
         
@@ -44,33 +40,39 @@ public class Gate {
         
     }
     
-    public OfflinePlayer getOwner(final OfflinePlayer owner) {
+    public OfflinePlayer getOwner() {
     
-        return (this.owner == null) ? owner : this.owner;
+        return this.owner;
         
     }
     
-    public GateType getType(final GateType type) {
+    public GateType getType() {
     
-        return (this.type == null) ? type : this.type;
+        return this.type;
         
     }
     
-    public GateRedstone getRedstone(final GateRedstone redstone) {
+    public GateRedstone getRedstone() {
     
-        return (this.redstone == null) ? redstone : this.redstone;
+        return this.redstone;
         
     }
     
-    public String getPermission() {
+    public boolean hasPermissionToCreate(final Player player) {
     
-        return this.permission;
+        return player.hasPermission("create");
         
     }
     
-    public boolean hasPermission(final Player player) {
+    public boolean hasPermissionToUse(final Player player) {
     
-        return player.hasPermission(this.permission) || player.hasPermission(this.type.getPermission());
+        return player.hasPermission("use");
+        
+    }
+    
+    public boolean hasPermissionToDestroy(final Player player) {
+    
+        return player.hasPermission("destroy");
         
     }
     
@@ -88,7 +90,7 @@ public class Gate {
     
     public void open(final Player player) {
     
-        if (!((player == null) || this.hasPermission(player))) { return; }
+        if (!((player == null) || this.hasPermissionToUse(player))) { return; }
         
         this.open = true;
         this.ready = false;
@@ -99,7 +101,7 @@ public class Gate {
     
     public void close(final Player player) {
     
-        if (!((player == null) || this.hasPermission(player))) { return; }
+        if (!((player == null) || this.hasPermissionToUse(player))) { return; }
         
         this.open = false;
         this.ready = false;
