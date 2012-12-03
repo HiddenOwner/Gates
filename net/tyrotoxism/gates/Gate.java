@@ -88,25 +88,25 @@ public class Gate {
         
     }
     
-    public void open(final Player player) {
+    public void open() {
     
-        if (!((player == null) || this.hasPermissionToUse(player))) { return; }
-        
         this.open = true;
         this.ready = false;
         
         // Open the gate
         
+        this.ready = true;
+        
     }
     
-    public void close(final Player player) {
+    public void close() {
     
-        if (!((player == null) || this.hasPermissionToUse(player))) { return; }
-        
         this.open = false;
         this.ready = false;
         
         // Close the gate
+        
+        this.ready = true;
         
     }
     

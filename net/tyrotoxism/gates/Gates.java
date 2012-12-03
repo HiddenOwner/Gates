@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.tyrotoxism.gates.listener.GateListener;
-import net.tyrotoxism.gates.listener.ProtectListener;
+import net.tyrotoxism.gates.listener.GateActivationListener;
+import net.tyrotoxism.gates.listener.GateCreationListener;
+import net.tyrotoxism.gates.listener.GateDestructionListener;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,8 +24,10 @@ public class Gates extends JavaPlugin {
         this.types.add(new GateType("instant", 0, 0, GateRedstone.OFF));
         this.types.add(new GateType("redstone", 32, 32, GateRedstone.ON));
         
-        this.getServer().getPluginManager().registerEvents(new GateListener(this), this);
-        this.getServer().getPluginManager().registerEvents(new ProtectListener(), this);
+        this.getServer().getPluginManager().registerEvents(new GateActivationListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new GateCreationListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new GateDestructionListener(this), this);
+        // this.getServer().getPluginManager().registerEvents(new GateProtectionListener(this), this);
         
         this.getLogger().log(Level.INFO, String.format("%s enabled.", this.getDescription().getFullName()));
         
@@ -43,50 +45,26 @@ public class Gates extends JavaPlugin {
         
     }
     
-    public Gate getGate(final Block block, final OfflinePlayer player) {
+    public Gate getGate(final Block block) {
+    
+        return this.getGate(block, null);
+        
+    }
+    
+    public Gate getGate(final Block block, final String[] lines) {
     
         if (!(block.getState() instanceof Sign)) { return null; }
         
         final Sign sign = (Sign) block.getState();
         
-        boolean isGate = false;
-        
-        for (final String line : sign.getLines()) {
+        for (final String line : (lines == null ? sign.getLines() : lines)) {
             
-            if (line.equalsIgnoreCase(Gates.label)) {
-                
-                isGate = true;
-                break;
-                
-            }
+            if (line.equalsIgnoreCase(Gates.label)) { return new Gate(this, sign); }
             
         }
         
-        if (!isGate) { return null; }
-        
-        GateType type = null;
-        
-        try {
-            
-            type = this.getType("default");
-            
-        } catch (final Exception e) {
-            
-            this.getLogger().log(Level.SEVERE, "The default gate type is invalid.");
-            return null;
-            
-        }
-        
-        final Gate gate = new Gate(this, sign);
-        
-        sign.setLine(0, Gates.label);
-        sign.setLine(1, sign.getLine(1).isEmpty() ? player.getName() : gate.getOwner().getName());
-        sign.setLine(2, sign.getLine(2).isEmpty() ? type.getName() : gate.getType().getName());
-        sign.setLine(3, sign.getLine(3).isEmpty() ? type.getRedstone().name() : gate.getRedstone().name());
-        
-        sign.update();
-        
-        return gate;
+        return null;
         
     }
+    
 }

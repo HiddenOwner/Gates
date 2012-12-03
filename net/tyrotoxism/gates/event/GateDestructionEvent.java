@@ -6,23 +6,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class GateActivationEvent extends GateEvent implements Cancellable {
+public class GateDestructionEvent extends GateEvent implements Cancellable {
     
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
-    private final ActivationAction action;
     
-    public GateActivationEvent(final Gate gate, final Player player, final ActivationAction action) {
+    public GateDestructionEvent(final Gate gate, final Player player) {
     
         super(gate, player);
         this.cancelled = false;
-        this.action = action;
-        
-    }
-    
-    public ActivationAction getAction() {
-    
-        return this.action;
         
     }
     
@@ -43,19 +35,13 @@ public class GateActivationEvent extends GateEvent implements Cancellable {
     @Override
     public HandlerList getHandlers() {
     
-        return GateActivationEvent.handlers;
+        return GateDestructionEvent.handlers;
         
     }
     
     public static HandlerList getHandlerList() {
     
-        return GateActivationEvent.handlers;
-    }
-    
-    public enum ActivationAction {
-        
-        PLAYER, REDSTONE;
-        
+        return GateDestructionEvent.handlers;
     }
     
 }

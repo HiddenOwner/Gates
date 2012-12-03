@@ -2,27 +2,36 @@ package net.tyrotoxism.gates.event;
 
 import net.tyrotoxism.gates.Gate;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class GateActivationEvent extends GateEvent implements Cancellable {
+public class GateProtectionEvent extends GateEvent implements Cancellable {
     
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
-    private final ActivationAction action;
+    private final boolean place;
+    private final Block block;
     
-    public GateActivationEvent(final Gate gate, final Player player, final ActivationAction action) {
+    public GateProtectionEvent(final Gate gate, final Player player, final boolean place, final Block block) {
     
         super(gate, player);
-        this.cancelled = false;
-        this.action = action;
+        this.cancelled = true;
+        this.place = place;
+        this.block = block;
         
     }
     
-    public ActivationAction getAction() {
+    public boolean isBlockPlace() {
     
-        return this.action;
+        return this.place;
+        
+    }
+    
+    public Block getBlock() {
+    
+        return this.block;
         
     }
     
@@ -43,19 +52,13 @@ public class GateActivationEvent extends GateEvent implements Cancellable {
     @Override
     public HandlerList getHandlers() {
     
-        return GateActivationEvent.handlers;
+        return GateProtectionEvent.handlers;
         
     }
     
     public static HandlerList getHandlerList() {
     
-        return GateActivationEvent.handlers;
-    }
-    
-    public enum ActivationAction {
-        
-        PLAYER, REDSTONE;
-        
+        return GateProtectionEvent.handlers;
     }
     
 }

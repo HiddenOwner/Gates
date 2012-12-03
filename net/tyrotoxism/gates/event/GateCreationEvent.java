@@ -9,7 +9,6 @@ import org.bukkit.event.HandlerList;
 public class GateCreationEvent extends GateEvent implements Cancellable {
     
     private static final HandlerList handlers = new HandlerList();
-    
     private boolean cancelled;
     
     public GateCreationEvent(final Gate gate, final Player player) {
