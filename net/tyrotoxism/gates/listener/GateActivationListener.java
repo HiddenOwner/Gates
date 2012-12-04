@@ -43,12 +43,10 @@ public class GateActivationListener implements Listener {
         if (!gate.isOpen()) {
             
             gate.open();
-            player.sendMessage("Open the gate!");
             
         } else {
             
             gate.close();
-            player.sendMessage("Close the gate!");
             
         }
         
