@@ -44,8 +44,6 @@ public class GateCreationListener implements Listener {
         event.setLine(2, gate.getType().getName());
         event.setLine(3, gate.getRedstone().name());
         
-        player.sendMessage("§aGate successfully created.");
-        
     }
     
 }

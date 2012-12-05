@@ -24,7 +24,7 @@ public class Gates extends JavaPlugin {
     @Override
     public void onEnable() {
     
-        this.types.add(new GateType("default", 32, GateRedstone.OFF, 4, 16, false));
+        this.types.add(new GateType("default", 16, GateRedstone.OFF, 4, 16, false));
         
         this.getServer().getPluginManager().registerEvents(new GateActivationListener(this), this);
         this.getServer().getPluginManager().registerEvents(new GateCreationListener(this), this);

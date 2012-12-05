@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Gate {
     
@@ -44,7 +45,7 @@ public class Gate {
         
         this.owner = this.sign.getLine(1).isEmpty() ? player : this.plugin.getServer().getOfflinePlayer(this.sign.getLine(1));
         this.type = this.sign.getLine(2).isEmpty() ? type : this.plugin.getType(this.sign.getLine(2));
-        this.redstone = this.sign.getLine(3).isEmpty() ? this.type.getRedstone() : GateRedstone.valueOf(this.sign.getLine(3));
+        this.redstone = this.sign.getLine(3).isEmpty() ? type.getRedstone() : GateRedstone.valueOf(this.sign.getLine(3));
         
         this.blockSearch(this.sign.getBlock(), this.type.getSearchRadius());
         
@@ -169,19 +170,59 @@ public class Gate {
     
     public boolean hasPermissionToCreate(final Player player) {
     
-        return player.hasPermission("create");
+        return player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.create");
         
     }
     
     public boolean hasPermissionToUse(final Player player) {
     
-        return player.hasPermission("use");
+        if (player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.use.*")) {
+            
+            return true;
+            
+        } else if (player.hasPermission("gates.use.player.*") || player.hasPermission(String.format("gates.use.player.%s", this.owner.getName().toLowerCase()))) {
+            
+            return true;
+            
+        } else if (player.hasPermission("gates.use.type.*") || player.hasPermission(String.format("gates.use.type.%s", this.type.getName().toLowerCase()))) {
+            
+            return true;
+            
+        } else if ((player.equals(this.owner) && player.hasPermission("gates.use.self")) || (!player.equals(this.owner) && player.hasPermission("gates.use.others"))) {
+            
+            return true;
+            
+        } else {
+            
+            return false;
+            
+        }
         
     }
     
     public boolean hasPermissionToDestroy(final Player player) {
     
-        return player.hasPermission("destroy");
+        if (player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.destroy.*")) {
+            
+            return true;
+            
+        } else if (player.hasPermission("gates.destroy.player.*") || player.hasPermission(String.format("gates.destroy.player.%s", this.owner.getName().toLowerCase()))) {
+            
+            return true;
+            
+        } else if (player.hasPermission("gates.destroy.type.*") || player.hasPermission(String.format("gates.destroy.type.%s", this.type.getName().toLowerCase()))) {
+            
+            return true;
+            
+        } else if ((player.equals(this.owner) && player.hasPermission("gates.destroy.self")) || (!player.equals(this.owner) && player.hasPermission("gates.destroy.others"))) {
+            
+            return true;
+            
+        } else {
+            
+            return false;
+            
+        }
         
     }
     
@@ -215,7 +256,7 @@ public class Gate {
     
     public boolean isInstant() {
     
-        return true;
+        return this.type.getDelay() == 0;
         
     }
     
@@ -223,7 +264,7 @@ public class Gate {
     
         if (!this.isInstant()) {
             
-            this.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(this.plugin, new GateTimer(this, true), 10, 10);
+            this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(true), this.type.getDelay());
             
         } else {
             
@@ -241,7 +282,7 @@ public class Gate {
     
         if (!this.isInstant()) {
             
-            this.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(this.plugin, new GateTimer(this, false), 10, 10);
+            this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(false), this.type.getDelay());
             
         } else {
             
@@ -255,14 +296,12 @@ public class Gate {
         
     }
     
-    private class GateTimer implements Runnable {
+    private class GateTimer extends BukkitRunnable {
         
-        private final Gate gate;
         private final boolean open;
         
-        public GateTimer(final Gate gate, final boolean open) {
+        public GateTimer(final boolean open) {
         
-            this.gate = gate;
             this.open = open;
             
         }
@@ -270,27 +309,64 @@ public class Gate {
         @Override
         public void run() {
         
-            // W.I.P.
-            
             if (this.open) {
                 
-                for (final Block block : this.gate.getGateBlocks()) {
+                int bottom = Gate.this.sign.getWorld().getMaxHeight();
+                
+                for (final Block block : Gate.this.gateBlocks) {
                     
-                    block.setType(Material.AIR);
+                    if ((block.getY() < bottom) && block.getType().equals(Gate.this.material)) {
+                        
+                        bottom = block.getY();
+                        
+                    }
+                    
+                }
+                
+                for (final Block block : Gate.this.gateBlocks) {
+                    
+                    if (block.getY() == bottom) {
+                        
+                        block.setType(Material.AIR);
+                        
+                    }
                     
                 }
                 
             } else {
                 
-                for (final Block block : this.gate.getGateBlocks()) {
+                int top = 0;
+                
+                for (final Block block : Gate.this.gateBlocks) {
                     
-                    block.setType(this.gate.getMaterial());
+                    if ((block.getY() > top) && !block.getType().equals(Gate.this.material)) {
+                        
+                        top = block.getY();
+                        
+                    }
+                    
+                }
+                
+                for (final Block block : Gate.this.gateBlocks) {
+                    
+                    if (block.getY() == top) {
+                        
+                        block.setType(Gate.this.material);
+                        
+                    }
                     
                 }
                 
             }
             
+            if (!Gate.this.isReady()) {
+                
+                Gate.this.plugin.getServer().getScheduler().runTaskLater(Gate.this.plugin, new GateTimer(this.open), Gate.this.type.getDelay());
+                
+            }
+            
         }
+        
     }
     
 }

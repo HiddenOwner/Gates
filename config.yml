@@ -2,7 +2,7 @@ default-type: default
 permission: true
 type:
     default:
-        delay: 200
+        delay: 16
         redstone: OFF
         search-radius: 8
         maximum-width: 16
@@ -14,25 +14,25 @@ type:
         maximum-width: 16
         branches: false
     redstone:
-        delay: 200
+        delay: 16
         redstone: ON
         search-radius: 8
         maximum-width: 16
         branches: false
     toggle:
-        delay: 200
+        delay: 16
         redstone: TOGGLE
         search-radius: 8
         maximum-width: 16
         branches: false
     endless:
-        delay: 200
+        delay: 16
         redstone: OFF
         search-radius: 32
         maximum-width: 0
         branches: false
     branches:
-        delay: 200
+        delay: 16
         redstone: OFF
         search-radius: 8
         maximum-width: 16
