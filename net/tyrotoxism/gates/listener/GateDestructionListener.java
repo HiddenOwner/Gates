@@ -4,6 +4,8 @@ import net.tyrotoxism.gates.Gate;
 import net.tyrotoxism.gates.Gates;
 import net.tyrotoxism.gates.event.GateDestructionEvent;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,18 +23,30 @@ public class GateDestructionListener implements Listener {
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onBlockBreak(final BlockBreakEvent event) {
+    public void onGateSignBreak(final BlockBreakEvent event) {
     
         final Gate gate = this.plugin.getGate(event.getBlock());
         final Player player = event.getPlayer();
         
-        if ((gate == null) || !gate.hasPermissionToDestroy(player)) { return; }
+        if (gate == null) { return; }
         
         final GateDestructionEvent evt = new GateDestructionEvent(gate, player);
+        
+        evt.setCancelled(!gate.hasPermissionToDestroy(player));
         
         this.plugin.getServer().getPluginManager().callEvent(evt);
         
         event.setCancelled(evt.isCancelled());
+        
+        if (!evt.isCancelled()) {
+            
+            for (final Block block : gate.getGateBlocks()) {
+                
+                block.setType(Material.AIR);
+                
+            }
+            
+        }
         
     }
     

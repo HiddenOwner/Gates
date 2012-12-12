@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import net.tyrotoxism.gates.listener.GateActivationListener;
 import net.tyrotoxism.gates.listener.GateCreationListener;
 import net.tyrotoxism.gates.listener.GateDestructionListener;
+import net.tyrotoxism.gates.listener.GateProtectionListener;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,17 +20,21 @@ public class Gates extends JavaPlugin {
     public static final String label = "[Gate]";
     public static final Material[] blocks = new Material[] { Material.FENCE, Material.NETHER_FENCE, Material.THIN_GLASS, Material.IRON_FENCE };
     
-    private final List<GateType> types = new ArrayList<GateType>();
+    private List<GateType> types;
+    private List<List<Block>> busyGates;
     
     @Override
     public void onEnable() {
     
-        this.types.add(new GateType("default", 16, GateRedstone.OFF, 4, 16, false));
+        this.types = new ArrayList<GateType>();
+        this.busyGates = new ArrayList<List<Block>>();
+        
+        this.types.add(new GateType("default", 16, GateRedstone.OFF, 16, false));
         
         this.getServer().getPluginManager().registerEvents(new GateActivationListener(this), this);
         this.getServer().getPluginManager().registerEvents(new GateCreationListener(this), this);
         this.getServer().getPluginManager().registerEvents(new GateDestructionListener(this), this);
-        // this.getServer().getPluginManager().registerEvents(new GateProtectionListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new GateProtectionListener(this), this);
         
         this.getLogger().log(Level.INFO, String.format("%s enabled.", this.getDescription().getFullName()));
         
@@ -44,6 +49,24 @@ public class Gates extends JavaPlugin {
         }
         
         return null;
+        
+    }
+    
+    public boolean isGateBusy(final Gate gate) {
+    
+        for (final List<Block> blocks : this.busyGates) {
+            
+            if (gate.getGateBlocks().equals(blocks)) { return true; }
+            
+        }
+        
+        return false;
+        
+    }
+    
+    public List<List<Block>> getBusyGates() {
+    
+        return this.busyGates;
         
     }
     

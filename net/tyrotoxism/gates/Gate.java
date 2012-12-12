@@ -47,7 +47,7 @@ public class Gate {
         this.type = this.sign.getLine(2).isEmpty() ? type : this.plugin.getType(this.sign.getLine(2));
         this.redstone = this.sign.getLine(3).isEmpty() ? type.getRedstone() : GateRedstone.valueOf(this.sign.getLine(3));
         
-        this.blockSearch(this.sign.getBlock(), this.type.getSearchRadius());
+        this.blockSearch(this.sign.getBlock(), 4);
         
         if (!this.solidBlocks.isEmpty()) {
             
@@ -264,7 +264,12 @@ public class Gate {
     
         if (!this.isInstant()) {
             
-            this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(true), this.type.getDelay());
+            if (!this.plugin.isGateBusy(this)) {
+                
+                this.plugin.getBusyGates().add(this.gateBlocks);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(true), this.type.getDelay());
+                
+            }
             
         } else {
             
@@ -282,7 +287,12 @@ public class Gate {
     
         if (!this.isInstant()) {
             
-            this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(false), this.type.getDelay());
+            if (!this.plugin.isGateBusy(this)) {
+                
+                this.plugin.getBusyGates().add(this.gateBlocks);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(false), this.type.getDelay());
+                
+            }
             
         } else {
             
@@ -362,6 +372,10 @@ public class Gate {
             if (!Gate.this.isReady()) {
                 
                 Gate.this.plugin.getServer().getScheduler().runTaskLater(Gate.this.plugin, new GateTimer(this.open), Gate.this.type.getDelay());
+                
+            } else {
+                
+                Gate.this.plugin.getBusyGates().remove(Gate.this.gateBlocks);
                 
             }
             

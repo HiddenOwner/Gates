@@ -25,7 +25,7 @@ public class GateActivationListener implements Listener {
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerInteract(final PlayerInteractEvent event) {
+    public void onGateSignInteraction(final PlayerInteractEvent event) {
     
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) { return; }
         
@@ -53,7 +53,7 @@ public class GateActivationListener implements Listener {
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onBlockRedstone(final BlockRedstoneEvent event) {
+    public void onGateBlockRedstone(final BlockRedstoneEvent event) {
     
         final Gate gate = this.plugin.getGate(event.getBlock(), null);
         
