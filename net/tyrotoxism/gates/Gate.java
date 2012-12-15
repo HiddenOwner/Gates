@@ -50,7 +50,7 @@ public class Gate {
         
         try {
             
-            this.blockSearch(this.sign.getBlock(), this.plugin.getConfig().getInt("search-radius"));
+            this.searchBlocks(this.sign.getBlock(), this.plugin.getConfig().getInt("search-radius"));
             
         } catch (final Exception e) {
             
@@ -65,7 +65,7 @@ public class Gate {
             
             for (Block block : this.solidBlocks) {
                 
-                while (((block = block.getRelative(BlockFace.DOWN)).isEmpty() || block.getType().equals(this.material)) && !this.gateBlocks.contains(block)) {
+                while (Gates.empty.contains((block = block.getRelative(BlockFace.DOWN)).getType()) || (block.getType().equals(this.material) && !this.gateBlocks.contains(block))) {
                     
                     this.gateBlocks.add(block);
                     
@@ -85,13 +85,13 @@ public class Gate {
         
     }
     
-    private void blockSearch(final Block block, final int radius) {
+    private void searchBlocks(final Block block, final int radius) {
     
-        for (int x = block.getX() - radius; x < (block.getX() + radius + 1); x++) {
+        for (int x = block.getX() - radius; x <= (block.getX() + radius); x++) {
             
-            for (int y = block.getY() - radius; y < (block.getY() + radius + 1); y++) {
+            for (int y = block.getY() - radius; y <= (block.getY() + radius); y++) {
                 
-                for (int z = block.getZ() - radius; z < (block.getZ() + radius + 1); z++) {
+                for (int z = block.getZ() - radius; z <= (block.getZ() + radius); z++) {
                     
                     final Block blockA = block.getWorld().getBlockAt(x, y, z);
                     
@@ -101,30 +101,17 @@ public class Gate {
                         
                     }
                     
-                    if (this.material == null) {
+                    if ((this.material == null) && Gates.blocks.contains(blockA.getType())) {
                         
-                        for (final Material type : Gates.blocks) {
-                            
-                            if (type.equals(blockA.getType())) {
-                                
-                                this.material = type;
-                                this.solidBlocks.add(blockA);
-                                this.blockSearch(blockA, 1);
-                                break;
-                                
-                            }
-                            
-                        }
+                        this.material = blockA.getType();
                         
-                    } else {
+                    }
+                    
+                    if ((this.material != null) && this.material.equals(blockA.getType())) {
                         
-                        if (this.material.equals(blockA.getType())) {
-                            
-                            this.solidBlocks.add(blockA);
-                            this.blockSearch(blockA, 1);
-                            break;
-                            
-                        }
+                        this.solidBlocks.add(blockA);
+                        this.searchBlocks(blockA, 1);
+                        break;
                         
                     }
                     
@@ -240,23 +227,7 @@ public class Gate {
     
         for (final Block block : this.gateBlocks) {
             
-            if (!block.isEmpty()) { return false; }
-            
-        }
-        
-        return true;
-        
-    }
-    
-    public boolean isReady() {
-    
-        for (final Block block : this.gateBlocks) {
-            
-            for (final Block blockA : this.gateBlocks) {
-                
-                if (!block.getType().equals(blockA.getType())) { return false; }
-                
-            }
+            if (!Gates.empty.contains(block.getType())) { return false; }
             
         }
         
@@ -274,12 +245,8 @@ public class Gate {
     
         if (!this.isInstant()) {
             
-            if (!this.plugin.isGateBusy(this)) {
-                
-                this.plugin.getBusyGates().add(this.gateBlocks);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(true), this.type.getDelay());
-                
-            }
+            this.plugin.getBusyGates().add(this.solidBlocks);
+            this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(true), this.type.getDelay());
             
         } else {
             
@@ -297,12 +264,8 @@ public class Gate {
     
         if (!this.isInstant()) {
             
-            if (!this.plugin.isGateBusy(this)) {
-                
-                this.plugin.getBusyGates().add(this.gateBlocks);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(false), this.type.getDelay());
-                
-            }
+            this.plugin.getBusyGates().add(this.solidBlocks);
+            this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(false), this.type.getDelay());
             
         } else {
             
@@ -379,15 +342,18 @@ public class Gate {
                 
             }
             
-            if (!Gate.this.isReady()) {
+            for (final Block block : Gate.this.gateBlocks) {
                 
-                Gate.this.plugin.getServer().getScheduler().runTaskLater(Gate.this.plugin, new GateTimer(this.open), Gate.this.type.getDelay());
-                
-            } else {
-                
-                Gate.this.plugin.getBusyGates().remove(Gate.this.gateBlocks);
+                if (block.getType().equals(Gate.this.material) && Gates.empty.contains(block.getRelative(BlockFace.DOWN).getType())) {
+                    
+                    Gate.this.plugin.getServer().getScheduler().runTaskLater(Gate.this.plugin, new GateTimer(this.open), Gate.this.type.getDelay());
+                    return;
+                    
+                }
                 
             }
+            
+            Gate.this.plugin.getBusyGates().remove(Gate.this.solidBlocks);
             
         }
         

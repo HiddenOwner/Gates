@@ -1,34 +1,30 @@
-default-type: default
-permission: true
-search-radius: 4
+# Turn off permissions by setting this value to false
+# By turning off permissions, everybody will have access to Gates
+permissions: true # (DEFAULT: true)
+
+# The default gate type, this will be applied to new Gates
+default-type: default # (DEFAULT: default)
+
+# The number of blocks to search for gate blocks in every direction from the gate sign
+search-radius: 4 # (DEFAULT: 4)
+
+# The maximum width and height of gates (Gate blocks)
+maximum-size: 16 # (DEFAULT: 16)
+
+# If gates should be allowed to branch out in different directions
+branches: false # (DEFAULT: false)
+
+# Gate types, these can be applied to gates for additional customization
 type:
     default:
         delay: 16
         redstone: REDSTONE_OFF
-        maximum-size: 16
-        branches: false
     instant:
         delay: 0
         redstone: REDSTONE_OFF
-        maximum-size: 16
-        branches: false
     redstone:
-        delay: 16
+        delay: 8
         redstone: REDSTONE_ON
-        maximum-size: 16
-        branches: false
     toggle:
-        delay: 16
+        delay: 8
         redstone: REDSTONE_TOGGLE
-        maximum-size: 16
-        branches: false
-    endless:
-        delay: 16
-        redstone: REDSTONE_OFF
-        maximum-size: 0
-        branches: false
-    branches:
-        delay: 16
-        redstone: REDSTONE_OFF
-        maximum-size: 16
-        branches: true

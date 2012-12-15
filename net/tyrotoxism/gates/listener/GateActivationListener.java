@@ -32,13 +32,13 @@ public class GateActivationListener implements Listener {
         final Gate gate = this.plugin.getGate(event.getClickedBlock());
         final Player player = event.getPlayer();
         
-        if ((gate == null) || !gate.hasPermissionToUse(player)) { return; }
+        if (gate == null) { return; }
         
         final GateActivationEvent evt = new GateActivationEvent(gate, player, ActivationAction.PLAYER);
         
         this.plugin.getServer().getPluginManager().callEvent(evt);
         
-        if (evt.isCancelled() || !gate.isReady()) { return; }
+        if (evt.isCancelled() || this.plugin.isGateBusy(gate) || !gate.hasPermissionToUse(player)) { return; }
         
         if (!gate.isOpen()) {
             
@@ -53,17 +53,17 @@ public class GateActivationListener implements Listener {
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onGateBlockRedstone(final BlockRedstoneEvent event) {
+    public void onGateSignRedstone(final BlockRedstoneEvent event) {
     
         final Gate gate = this.plugin.getGate(event.getBlock(), null);
         
-        if ((gate == null) || gate.getRedstone().equals(GateRedstone.OFF)) { return; }
+        if (gate == null) { return; }
         
         final GateActivationEvent evt = new GateActivationEvent(gate, null, ActivationAction.REDSTONE);
         
         this.plugin.getServer().getPluginManager().callEvent(evt);
         
-        if (evt.isCancelled() || !gate.isReady()) { return; }
+        if (evt.isCancelled() || this.plugin.isGateBusy(gate) || gate.getRedstone().equals(GateRedstone.OFF)) { return; }
         
         if (gate.getRedstone().equals(GateRedstone.ON)) {
             

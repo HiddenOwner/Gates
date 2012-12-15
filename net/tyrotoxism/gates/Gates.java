@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -26,7 +27,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Gates extends JavaPlugin {
     
     public static final String label = "[Gate]";
-    public static final Material[] blocks = new Material[] { Material.FENCE, Material.NETHER_FENCE, Material.THIN_GLASS, Material.IRON_FENCE };
+    public static final List<Material> blocks = Arrays.asList(new Material[] { Material.FENCE, Material.NETHER_FENCE, Material.THIN_GLASS, Material.IRON_FENCE });
+    public static final List<Material> empty = Arrays.asList(new Material[] { Material.AIR, Material.STATIONARY_LAVA, Material.STATIONARY_WATER });
     
     private List<GateType> types;
     private List<List<Block>> busyGates;
@@ -114,7 +116,7 @@ public class Gates extends JavaPlugin {
             
             final ConfigurationSection section = parent.getConfigurationSection(type);
             
-            this.types.add(new GateType(type, section.getInt("delay"), GateRedstone.getByName(section.getString("redstone")), section.getInt("maximum-size"), section.getBoolean("branches")));
+            this.types.add(new GateType(type, section.getInt("delay"), GateRedstone.getByName(section.getString("redstone"))));
             
         }
         
@@ -143,7 +145,7 @@ public class Gates extends JavaPlugin {
     
         for (final List<Block> blocks : this.busyGates) {
             
-            if (gate.getGateBlocks().equals(blocks)) { return true; }
+            if (gate.getSolidBlocks().equals(blocks)) { return true; }
             
         }
         
@@ -181,6 +183,12 @@ public class Gates extends JavaPlugin {
             
         }
         
+        return null;
+        
+    }
+    
+    public Gate searchGate(final Block block) {
+    
         return null;
         
     }

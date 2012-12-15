@@ -5,16 +5,12 @@ public class GateType {
     private final String name;
     private final int delay;
     private final GateRedstone redstone;
-    private final int width;
-    private final boolean branches;
     
-    public GateType(final String name, final int delay, final GateRedstone redstone, final int width, final boolean branches) {
+    public GateType(final String name, final int delay, final GateRedstone redstone) {
     
         this.name = name;
         this.delay = delay;
         this.redstone = redstone;
-        this.width = width;
-        this.branches = branches;
         
     }
     
@@ -33,18 +29,6 @@ public class GateType {
     public GateRedstone getRedstone() {
     
         return this.redstone;
-        
-    }
-    
-    public int getMaximumWidth() {
-    
-        return this.width;
-        
-    }
-    
-    public boolean getBranches() {
-    
-        return this.branches;
         
     }
     
