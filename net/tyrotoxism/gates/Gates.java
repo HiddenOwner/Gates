@@ -1,5 +1,11 @@
 package net.tyrotoxism.gates;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -12,6 +18,8 @@ import net.tyrotoxism.gates.listener.GateProtectionListener;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,7 +37,86 @@ public class Gates extends JavaPlugin {
         this.types = new ArrayList<GateType>();
         this.busyGates = new ArrayList<List<Block>>();
         
-        this.types.add(new GateType("default", 16, GateRedstone.OFF, 16, false));
+        this.getDataFolder().mkdirs();
+        
+        final File file = new File(this.getDataFolder(), "config.yml");
+        boolean loaded = false;
+        
+        while (!loaded) {
+            
+            try {
+                
+                this.getConfig().load(file);
+                
+            } catch (final FileNotFoundException u2silly) {
+                
+                try {
+                    
+                    file.createNewFile();
+                    
+                } catch (final IOException e) {
+                    
+                    e.printStackTrace();
+                    
+                }
+                
+                try {
+                    
+                    final InputStream input = this.getClass().getResource("/config.yml").openStream();
+                    final OutputStream output = new FileOutputStream(file);
+                    int read;
+                    
+                    while (0 <= (read = input.read())) {
+                        
+                        output.write(read);
+                        
+                    }
+                    
+                    output.close();
+                    input.close();
+                    
+                } catch (final FileNotFoundException e) {
+                    
+                    final boolean deleted = file.delete();
+                    
+                    this.getLogger().log(Level.SEVERE, String.format("%sestart (not reload) the server.", deleted ? "R" : "Delete the empty \"plugins/Gates/config.yml\" file and r"));
+                    e.printStackTrace();
+                    
+                } catch (final IOException e) {
+                    
+                    e.printStackTrace();
+                    
+                } finally {
+                    
+                    this.getLogger().log(Level.INFO, "The configuration file has been created.");
+                    
+                }
+                
+            } catch (final IOException e) {
+                
+                e.printStackTrace();
+                
+            } catch (final InvalidConfigurationException e) {
+                
+                e.printStackTrace();
+                
+            } finally {
+                
+                loaded = true;
+                
+            }
+            
+        }
+        
+        final ConfigurationSection parent = this.getConfig().getConfigurationSection("type");
+        
+        for (final String type : parent.getKeys(false)) {
+            
+            final ConfigurationSection section = parent.getConfigurationSection(type);
+            
+            this.types.add(new GateType(type, section.getInt("delay"), GateRedstone.getByName(section.getString("redstone")), section.getInt("maximum-size"), section.getBoolean("branches")));
+            
+        }
         
         this.getServer().getPluginManager().registerEvents(new GateActivationListener(this), this);
         this.getServer().getPluginManager().registerEvents(new GateCreationListener(this), this);

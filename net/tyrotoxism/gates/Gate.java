@@ -35,11 +35,12 @@ public class Gate {
         
         try {
             
-            type = this.plugin.getType("default");
+            type = this.plugin.getType(this.plugin.getConfig().getString("default-type"));
             
         } catch (final Exception e) {
             
-            this.plugin.getLogger().log(Level.SEVERE, "The default gate type is invalid.");
+            this.plugin.getLogger().log(Level.SEVERE, "The default gate type is invalid. Check your configurations.");
+            e.printStackTrace();
             
         }
         
@@ -47,7 +48,16 @@ public class Gate {
         this.type = this.sign.getLine(2).isEmpty() ? type : this.plugin.getType(this.sign.getLine(2));
         this.redstone = this.sign.getLine(3).isEmpty() ? type.getRedstone() : GateRedstone.valueOf(this.sign.getLine(3));
         
-        this.blockSearch(this.sign.getBlock(), 4);
+        try {
+            
+            this.blockSearch(this.sign.getBlock(), this.plugin.getConfig().getInt("search-radius"));
+            
+        } catch (final Exception e) {
+            
+            this.plugin.getLogger().log(Level.SEVERE, "The search radius is invalid. Check your configurations.");
+            e.printStackTrace();
+            
+        }
         
         if (!this.solidBlocks.isEmpty()) {
             

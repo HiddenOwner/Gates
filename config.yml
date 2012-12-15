@@ -4,31 +4,31 @@ search-radius: 4
 type:
     default:
         delay: 16
-        redstone: OFF
+        redstone: REDSTONE_OFF
         maximum-size: 16
         branches: false
     instant:
         delay: 0
-        redstone: OFF
+        redstone: REDSTONE_OFF
         maximum-size: 16
         branches: false
     redstone:
         delay: 16
-        redstone: ON
+        redstone: REDSTONE_ON
         maximum-size: 16
         branches: false
     toggle:
         delay: 16
-        redstone: TOGGLE
+        redstone: REDSTONE_TOGGLE
         maximum-size: 16
         branches: false
     endless:
         delay: 16
-        redstone: OFF
+        redstone: REDSTONE_OFF
         maximum-size: 0
         branches: false
     branches:
         delay: 16
-        redstone: OFF
+        redstone: REDSTONE_OFF
         maximum-size: 16
         branches: true
