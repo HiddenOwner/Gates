@@ -34,6 +34,8 @@ public class GateActivationListener implements Listener {
         
         if (gate == null) { return; }
         
+        event.setCancelled(true);
+        
         final GateActivationEvent evt = new GateActivationEvent(gate, player, ActivationAction.PLAYER);
         
         this.plugin.getServer().getPluginManager().callEvent(evt);
