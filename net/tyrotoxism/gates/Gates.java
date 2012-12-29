@@ -196,9 +196,7 @@ public class Gates extends JavaPlugin {
         this.material = null;
         this.gateSearchBlocks = new ArrayList<Block>();
         
-        Block blockA = block;
-        
-        this.searchGateBlocks(blockA, 0);
+        Block blockA = block.getRelative(BlockFace.DOWN);
         
         while (Gates.blocks.contains((blockA = blockA.getRelative(BlockFace.UP)).getType()) || Gates.empty.contains(blockA.getType())) {
             

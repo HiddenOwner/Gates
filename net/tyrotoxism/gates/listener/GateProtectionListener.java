@@ -1,7 +1,10 @@
 package net.tyrotoxism.gates.listener;
 
+import net.tyrotoxism.gates.Gate;
 import net.tyrotoxism.gates.Gates;
 
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -21,13 +24,23 @@ public class GateProtectionListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onGateBlockInteract(final PlayerInteractEvent event) {
     
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+        if (event.isCancelled()) { return; }
+        
+        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             
-            event.setCancelled((this.plugin.searchGate(event.getClickedBlock()) != null) || (this.plugin.searchGate(event.getClickedBlock().getRelative(event.getBlockFace())) != null));
+            final Block block = event.getClickedBlock();
             
-        } else {
+            if (this.plugin.getGate(block) != null) { return; }
             
-            event.setCancelled((event.getAction() == Action.LEFT_CLICK_BLOCK) && (this.plugin.searchGate(event.getClickedBlock()) != null));
+            final Gate gate = this.plugin.searchGate(block);
+            
+            if (gate == null) { return; }
+            
+            event.setCancelled(gate.getGateBlocks().contains(block) || gate.getSolidBlocks().contains(block) || gate.getGateBlocks().contains(block.getRelative(BlockFace.UP)) || gate.getSolidBlocks().contains(block.getRelative(BlockFace.UP)));
+            
+        } else if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            
+            event.setCancelled(this.plugin.searchGate(event.getClickedBlock().getRelative(event.getBlockFace())) != null);
             
         }
         

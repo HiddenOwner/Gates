@@ -23,6 +23,8 @@ public class GateCreationListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onGateSignChange(final SignChangeEvent event) {
     
+        if (event.isCancelled()) { return; }
+        
         final Gate gate = this.plugin.getGate(event.getBlock(), event.getPlayer(), event.getLines());
         final Player player = event.getPlayer();
         

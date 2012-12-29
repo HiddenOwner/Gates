@@ -6,6 +6,8 @@ import net.tyrotoxism.gates.event.GateDestructionEvent;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,8 +27,32 @@ public class GateDestructionListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onGateSignBreak(final BlockBreakEvent event) {
     
-        final Gate gate = this.plugin.getGate(event.getBlock());
+        if (event.isCancelled()) { return; }
+        
+        Gate gate = this.plugin.getGate(event.getBlock());
         final Player player = event.getPlayer();
+        
+        if (gate == null) {
+            
+            for (final BlockFace face : new BlockFace[] { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP }) {
+                
+                final Block block = event.getBlock().getRelative(face);
+                
+                if ((block.getState() instanceof Sign) && ((org.bukkit.material.Sign) block.getState().getData()).getAttachedFace().equals(face.getOppositeFace())) {
+                    
+                    gate = this.plugin.getGate(block);
+                    
+                    if (gate != null) {
+                        
+                        break;
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
         
         if (gate == null) { return; }
         
@@ -36,9 +62,9 @@ public class GateDestructionListener implements Listener {
         
         this.plugin.getServer().getPluginManager().callEvent(evt);
         
-        event.setCancelled(evt.isCancelled());
+        event.setCancelled(evt.isCancelled() || this.plugin.isGateBusy(gate));
         
-        if (!evt.isCancelled()) {
+        if (!event.isCancelled()) {
             
             for (final Block block : gate.getGateBlocks()) {
                 
@@ -49,5 +75,4 @@ public class GateDestructionListener implements Listener {
         }
         
     }
-    
 }

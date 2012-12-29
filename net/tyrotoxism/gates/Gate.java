@@ -50,7 +50,7 @@ public class Gate {
         
         try {
             
-            this.searchBlocks(this.sign.getBlock(), this.plugin.getConfig().getInt("search-radius"));
+            this.searchBlocks(this.sign.getBlock(), this.plugin.getConfig().getInt("search-radius"), true);
             
         } catch (final Exception e) {
             
@@ -85,7 +85,7 @@ public class Gate {
         
     }
     
-    private void searchBlocks(final Block block, final int radius) {
+    private void searchBlocks(final Block block, final int radius, final boolean origin) {
     
         for (int x = block.getX() - radius; x <= (block.getX() + radius); x++) {
             
@@ -110,8 +110,9 @@ public class Gate {
                     if ((this.material != null) && this.material.equals(blockA.getType())) {
                         
                         this.solidBlocks.add(blockA);
-                        this.searchBlocks(blockA, 1);
-                        break;
+                        this.searchBlocks(blockA, 1, false);
+                        
+                        if (origin) { return; }
                         
                     }
                     

@@ -27,7 +27,7 @@ public class GateActivationListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onGateSignInteraction(final PlayerInteractEvent event) {
     
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) { return; }
+        if (event.isCancelled() || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) { return; }
         
         final Gate gate = this.plugin.getGate(event.getClickedBlock());
         final Player player = event.getPlayer();
