@@ -18,7 +18,6 @@ import net.tyrotoxism.gates.listener.GateProtectionListener;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -33,9 +32,6 @@ public class Gates extends JavaPlugin {
     
     private List<GateType> types;
     private List<List<Block>> busyGates;
-    
-    private Material material;
-    private List<Block> gateSearchBlocks;
     
     @Override
     public void onEnable() {
@@ -193,78 +189,7 @@ public class Gates extends JavaPlugin {
     
     public Gate searchGate(final Block block) {
     
-        this.material = null;
-        this.gateSearchBlocks = new ArrayList<Block>();
-        
-        Block blockA = block.getRelative(BlockFace.DOWN);
-        
-        while (Gates.blocks.contains((blockA = blockA.getRelative(BlockFace.UP)).getType()) || Gates.empty.contains(blockA.getType())) {
-            
-            this.searchGateBlocks(blockA, 0);
-            
-        }
-        
-        for (final Block blockB : this.gateSearchBlocks) {
-            
-            final int radius = this.getConfig().getInt("search-radius");
-            
-            for (int x = blockB.getX() - radius; x <= (blockB.getX() + radius); x++) {
-                
-                for (int y = blockB.getY() - radius; y <= (blockB.getY() + radius); y++) {
-                    
-                    for (int z = blockB.getZ() - radius; z <= (blockB.getZ() + radius); z++) {
-                        
-                        final Gate gate = this.getGate(blockB.getWorld().getBlockAt(x, y, z));
-                        
-                        if (gate != null) { return gate; }
-                        
-                    }
-                    
-                }
-                
-            }
-            
-        }
-        
-        return null;
-        
-    }
-    
-    private void searchGateBlocks(final Block block, final int radius) {
-    
-        for (int x = block.getX() - radius; x <= (block.getX() + radius); x++) {
-            
-            for (int y = block.getY() - radius; y <= (block.getY() + radius); y++) {
-                
-                for (int z = block.getZ() - radius; z <= (block.getZ() + radius); z++) {
-                    
-                    final Block blockA = block.getWorld().getBlockAt(x, y, z);
-                    
-                    if (this.gateSearchBlocks.contains(blockA)) {
-                        
-                        continue;
-                        
-                    }
-                    
-                    if ((this.material == null) && Gates.blocks.contains(blockA.getType())) {
-                        
-                        this.material = blockA.getType();
-                        
-                    }
-                    
-                    if ((this.material != null) && this.material.equals(blockA.getType())) {
-                        
-                        this.gateSearchBlocks.add(blockA);
-                        this.searchGateBlocks(blockA, 1);
-                        break;
-                        
-                    }
-                    
-                }
-                
-            }
-            
-        }
+        return new GateSearch(this, block).getGate();
         
     }
     

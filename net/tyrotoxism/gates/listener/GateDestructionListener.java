@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -30,7 +29,6 @@ public class GateDestructionListener implements Listener {
         if (event.isCancelled()) { return; }
         
         Gate gate = this.plugin.getGate(event.getBlock());
-        final Player player = event.getPlayer();
         
         if (gate == null) {
             
@@ -56,9 +54,9 @@ public class GateDestructionListener implements Listener {
         
         if (gate == null) { return; }
         
-        final GateDestructionEvent evt = new GateDestructionEvent(gate, player);
+        final GateDestructionEvent evt = new GateDestructionEvent(gate, event.getPlayer());
         
-        evt.setCancelled(!gate.hasPermissionToDestroy(player));
+        evt.setCancelled(!gate.hasPermissionToDestroy(event.getPlayer()));
         
         this.plugin.getServer().getPluginManager().callEvent(evt);
         
@@ -71,6 +69,12 @@ public class GateDestructionListener implements Listener {
                 block.setType(Material.AIR);
                 
             }
+            
+        }
+        
+        if (this.plugin.getConfig().getBoolean("debug")) {
+            
+            event.getPlayer().sendMessage("§eGate removed.");
             
         }
         

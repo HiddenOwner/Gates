@@ -14,6 +14,9 @@ maximum-size: 16 # (DEFAULT: 16)
 # If gates should be allowed to branch out in different directions
 branches: false # (DEFAULT: false)
 
+# If debug messages should be displayed
+debug: false # (DEFAULT: false)
+
 # Gate types, these can be applied to gates for additional customization
 type:
     default:

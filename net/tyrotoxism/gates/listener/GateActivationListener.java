@@ -6,7 +6,6 @@ import net.tyrotoxism.gates.Gates;
 import net.tyrotoxism.gates.event.GateActivationEvent;
 import net.tyrotoxism.gates.event.GateActivationEvent.ActivationAction;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -30,25 +29,36 @@ public class GateActivationListener implements Listener {
         if (event.isCancelled() || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) { return; }
         
         final Gate gate = this.plugin.getGate(event.getClickedBlock());
-        final Player player = event.getPlayer();
         
         if (gate == null) { return; }
         
         event.setCancelled(true);
         
-        final GateActivationEvent evt = new GateActivationEvent(gate, player, ActivationAction.PLAYER);
+        final GateActivationEvent evt = new GateActivationEvent(gate, event.getPlayer(), ActivationAction.PLAYER);
         
         this.plugin.getServer().getPluginManager().callEvent(evt);
         
-        if (evt.isCancelled() || this.plugin.isGateBusy(gate) || !gate.hasPermissionToUse(player)) { return; }
+        if (evt.isCancelled() || this.plugin.isGateBusy(gate) || !gate.hasPermissionToUse(event.getPlayer())) { return; }
         
         if (!gate.isOpen()) {
             
             gate.open();
             
+            if (this.plugin.getConfig().getBoolean("debug")) {
+                
+                event.getPlayer().sendMessage("§eOpening gate.");
+                
+            }
+            
         } else {
             
             gate.close();
+            
+            if (this.plugin.getConfig().getBoolean("debug")) {
+                
+                event.getPlayer().sendMessage("§eClosing gate.");
+                
+            }
             
         }
         
