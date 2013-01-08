@@ -29,15 +29,14 @@ public class Gates extends JavaPlugin {
     public static final String label = "[Gate]";
     public static final List<Material> blocks = Arrays.asList(new Material[] { Material.FENCE, Material.NETHER_FENCE, Material.THIN_GLASS, Material.IRON_FENCE });
     public static final List<Material> empty = Arrays.asList(new Material[] { Material.AIR, Material.LAVA, Material.STATIONARY_LAVA, Material.WATER, Material.STATIONARY_WATER });
+    public static final List<Sign> busyGates = new ArrayList<Sign>();
     
     private List<GateType> types;
-    private List<List<Block>> busyGates;
     
     @Override
     public void onEnable() {
     
         this.types = new ArrayList<GateType>();
-        this.busyGates = new ArrayList<List<Block>>();
         
         this.getDataFolder().mkdirs();
         
@@ -143,9 +142,11 @@ public class Gates extends JavaPlugin {
     
     public boolean isGateBusy(final Gate gate) {
     
-        for (final List<Block> blocks : this.busyGates) {
+        if (Gates.busyGates.isEmpty() || gate.getSolidBlocks().isEmpty()) { return false; }
+        
+        for (final Sign sign : Gates.busyGates) {
             
-            if (gate.getSolidBlocks().equals(blocks)) { return true; }
+            if (this.searchGate(gate.getSolidBlocks().get(0)).getSign().equals(sign)) { return true; }
             
         }
         
@@ -153,15 +154,15 @@ public class Gates extends JavaPlugin {
         
     }
     
-    public List<List<Block>> getBusyGates() {
+    public Gate getGate(final Block block) {
     
-        return this.busyGates;
+        return this.getGate(block, null, null);
         
     }
     
-    public Gate getGate(final Block block) {
+    public Gate getGate(final Block block, final Player player) {
     
-        return this.getGate(block, null);
+        return this.getGate(block, player, null);
         
     }
     

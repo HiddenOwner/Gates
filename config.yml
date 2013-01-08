@@ -17,6 +17,9 @@ branches: false # (DEFAULT: false)
 # If debug messages should be displayed
 debug: false # (DEFAULT: false)
 
+# If actions should be stored in the console log (Live in the console)
+console-log: false # (DEFAULT: false)
+
 # Gate types, these can be applied to gates for additional customization
 type:
     default:

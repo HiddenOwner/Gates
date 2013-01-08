@@ -1,5 +1,7 @@
 package net.tyrotoxism.gates.listener;
 
+import java.util.logging.Level;
+
 import net.tyrotoxism.gates.Gate;
 import net.tyrotoxism.gates.Gates;
 import net.tyrotoxism.gates.event.GateDestructionEvent;
@@ -52,7 +54,16 @@ public class GateDestructionListener implements Listener {
             
         }
         
-        if (gate == null) { return; }
+        if (gate == null) {
+            
+            return;
+            
+        } else if (this.plugin.isGateBusy(gate)) {
+            
+            event.setCancelled(true);
+            return;
+            
+        }
         
         final GateDestructionEvent evt = new GateDestructionEvent(gate, event.getPlayer());
         
@@ -60,9 +71,7 @@ public class GateDestructionListener implements Listener {
         
         this.plugin.getServer().getPluginManager().callEvent(evt);
         
-        event.setCancelled(evt.isCancelled() || this.plugin.isGateBusy(gate));
-        
-        if (!event.isCancelled()) {
+        if (!evt.isCancelled()) {
             
             for (final Block block : gate.getGateBlocks()) {
                 
@@ -70,13 +79,34 @@ public class GateDestructionListener implements Listener {
                 
             }
             
-        }
-        
-        if (this.plugin.getConfig().getBoolean("debug")) {
+            if (this.plugin.getConfig().getBoolean("debug")) {
+                
+                event.getPlayer().sendMessage("§eGate removed.");
+                
+            }
             
-            event.getPlayer().sendMessage("§eGate removed.");
+            if (this.plugin.getConfig().getBoolean("console-log")) {
+                
+                this.plugin.getLogger().log(Level.INFO, String.format("%s removed gate sign %s", event.getPlayer(), String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
+                
+            }
+            
+        } else {
+            
+            if (this.plugin.getConfig().getBoolean("debug")) {
+                
+                event.getPlayer().sendMessage("§cYou can't break that gate sign.");
+                
+            }
+            
+            if (this.plugin.getConfig().getBoolean("console-log")) {
+                
+                this.plugin.getLogger().log(Level.INFO, String.format("%s tried to remove gate sign %s, but was denied", event.getPlayer(), String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
+                
+            }
             
         }
         
     }
+    
 }

@@ -1,5 +1,7 @@
 package net.tyrotoxism.gates.listener;
 
+import java.util.logging.Level;
+
 import net.tyrotoxism.gates.Gate;
 import net.tyrotoxism.gates.Gates;
 import net.tyrotoxism.gates.event.GateCreationEvent;
@@ -46,13 +48,19 @@ public class GateCreationListener implements Listener {
                         
                         final Gate gateA = this.plugin.searchGate(blockA);
                         
-                        if ((gateA != null) && !(event.getPlayer().hasPermission("gates.*") || event.getPlayer().hasPermission("gates.op") || (gateA.getOwner() == event.getPlayer()))) {
+                        if ((gateA != null) && !(!this.plugin.getConfig().getBoolean("permissions") || event.getPlayer().hasPermission("*") || event.getPlayer().hasPermission("gates.*") || event.getPlayer().hasPermission("gates.op") || (gateA.getOwner() == event.getPlayer()))) {
                             
                             evt.setCancelled(true);
                             
                             if (this.plugin.getConfig().getBoolean("debug")) {
                                 
                                 event.getPlayer().sendMessage("§cAnother gate already exists here.");
+                                
+                            }
+                            
+                            if (this.plugin.getConfig().getBoolean("console-log")) {
+                                
+                                this.plugin.getLogger().log(Level.INFO, String.format("%s tried to create a gate sign connected to %s, but was denied", event.getPlayer().getName(), String.format("(GATE SIGN x%s y%s z%s)", gateA.getSign().getX(), gateA.getSign().getY(), gateA.getSign().getZ())));
                                 
                             }
                             
@@ -93,7 +101,13 @@ public class GateCreationListener implements Listener {
         
         if (this.plugin.getConfig().getBoolean("debug")) {
             
-            event.getPlayer().sendMessage("§aGate created.");
+            event.getPlayer().sendMessage("§eGate created.");
+            
+        }
+        
+        if (this.plugin.getConfig().getBoolean("console-log")) {
+            
+            this.plugin.getLogger().log(Level.INFO, String.format("%s create a gate sign connected to %s", event.getPlayer().getName(), String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
             
         }
         

@@ -101,9 +101,19 @@ public class Gate {
                         
                     }
                     
-                    if ((this.material == null) && Gates.blocks.contains(blockA.getType())) {
+                    if (Gates.blocks.contains(blockA.getType())) {
                         
-                        this.material = blockA.getType();
+                        if (this.material == null) {
+                            
+                            this.material = blockA.getType();
+                            
+                        }
+                        
+                        if ((this.solidBlocks.size() > 1) && !this.plugin.getConfig().getBoolean("branches") && !(((this.solidBlocks.get(0).getX() == x) && (this.solidBlocks.get(1).getX() == x)) || ((this.solidBlocks.get(0).getZ() == z) && (this.solidBlocks.get(1).getZ() == z)))) {
+                            
+                            continue;
+                            
+                        }
                         
                     }
                     
@@ -168,13 +178,17 @@ public class Gate {
     
     public boolean hasPermissionToCreate(final Player player) {
     
-        return player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.create");
+        return !this.plugin.getConfig().getBoolean("permissions") || player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.create");
         
     }
     
     public boolean hasPermissionToUse(final Player player) {
     
-        if (player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.use.*")) {
+        if (!this.plugin.getConfig().getBoolean("permissions")) {
+            
+            return true;
+            
+        } else if (player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.use.*")) {
             
             return true;
             
@@ -200,7 +214,11 @@ public class Gate {
     
     public boolean hasPermissionToDestroy(final Player player) {
     
-        if (player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.destroy.*")) {
+        if (!this.plugin.getConfig().getBoolean("permissions")) {
+            
+            return true;
+            
+        } else if (player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.destroy.*")) {
             
             return true;
             
@@ -246,7 +264,9 @@ public class Gate {
     
         if (!this.isInstant()) {
             
-            this.plugin.getBusyGates().add(this.solidBlocks);
+            if (this.solidBlocks.isEmpty()) { return; }
+            
+            Gates.busyGates.add(this.plugin.searchGate(this.solidBlocks.get(0)).getSign());
             this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(true), this.type.getDelay());
             
         } else {
@@ -265,7 +285,9 @@ public class Gate {
     
         if (!this.isInstant()) {
             
-            this.plugin.getBusyGates().add(this.solidBlocks);
+            if (this.solidBlocks.isEmpty()) { return; }
+            
+            Gates.busyGates.add(this.plugin.searchGate(this.solidBlocks.get(0)).getSign());
             this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new GateTimer(false), this.type.getDelay());
             
         } else {
@@ -354,7 +376,9 @@ public class Gate {
                 
             }
             
-            Gate.this.plugin.getBusyGates().remove(Gate.this.solidBlocks);
+            if (Gate.this.solidBlocks.isEmpty()) { return; }
+            
+            Gates.busyGates.remove(Gate.this.plugin.searchGate(Gate.this.solidBlocks.get(0)).getSign());
             
         }
         

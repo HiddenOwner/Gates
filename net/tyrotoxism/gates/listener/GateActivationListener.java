@@ -1,5 +1,7 @@
 package net.tyrotoxism.gates.listener;
 
+import java.util.logging.Level;
+
 import net.tyrotoxism.gates.Gate;
 import net.tyrotoxism.gates.GateRedstone;
 import net.tyrotoxism.gates.Gates;
@@ -50,6 +52,12 @@ public class GateActivationListener implements Listener {
                 
             }
             
+            if (this.plugin.getConfig().getBoolean("console-log")) {
+                
+                this.plugin.getLogger().log(Level.INFO, String.format("%s opened gate %s", event.getPlayer().getName(), String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
+                
+            }
+            
         } else {
             
             gate.close();
@@ -60,6 +68,12 @@ public class GateActivationListener implements Listener {
                 
             }
             
+            if (this.plugin.getConfig().getBoolean("console-log")) {
+                
+                this.plugin.getLogger().log(Level.INFO, String.format("%s closed gate %s", event.getPlayer().getName(), String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
+                
+            }
+            
         }
         
     }
@@ -67,7 +81,7 @@ public class GateActivationListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onGateSignRedstone(final BlockRedstoneEvent event) {
     
-        final Gate gate = this.plugin.getGate(event.getBlock(), null);
+        final Gate gate = this.plugin.getGate(event.getBlock());
         
         if (gate == null) { return; }
         
@@ -87,11 +101,23 @@ public class GateActivationListener implements Listener {
                     
                 }
                 
+                if (this.plugin.getConfig().getBoolean("console-log")) {
+                    
+                    this.plugin.getLogger().log(Level.INFO, String.format("Redstone opened gate %s", String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
+                    
+                }
+                
             } else {
                 
                 if (gate.isOpen()) {
                     
                     gate.close();
+                    
+                }
+                
+                if (this.plugin.getConfig().getBoolean("console-log")) {
+                    
+                    this.plugin.getLogger().log(Level.INFO, String.format("Redstone closed gate %s", String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
                     
                 }
                 
@@ -103,9 +129,21 @@ public class GateActivationListener implements Listener {
                 
                 gate.open();
                 
+                if (this.plugin.getConfig().getBoolean("console-log")) {
+                    
+                    this.plugin.getLogger().log(Level.INFO, String.format("Redstone opened gate %s", String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
+                    
+                }
+                
             } else {
                 
                 gate.close();
+                
+                if (this.plugin.getConfig().getBoolean("console-log")) {
+                    
+                    this.plugin.getLogger().log(Level.INFO, String.format("Redstone closed gate %s", String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
+                    
+                }
                 
             }
             
