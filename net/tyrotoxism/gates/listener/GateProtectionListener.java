@@ -10,8 +10,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 public class GateProtectionListener implements Listener {
     
@@ -24,115 +24,65 @@ public class GateProtectionListener implements Listener {
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onGateBlockInteract(final PlayerInteractEvent event) {
+    public void onGateProtectBreak(final BlockBreakEvent event) {
     
         if (event.isCancelled()) { return; }
         
-        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+        final Gate gate = Gates.blocks.contains(event.getBlock().getType()) ? this.plugin.searchGate(event.getBlock()) : this.plugin.searchGate(event.getBlock().getRelative(BlockFace.UP));
+        
+        if ((gate != null) && (this.plugin.getGate(event.getBlock()) == null) && (gate.getGateBlocks().contains(event.getBlock()) || gate.getSolidBlocks().contains(event.getBlock()) || gate.getGateBlocks().contains(event.getBlock().getRelative(BlockFace.UP)) || gate.getSolidBlocks().contains(event.getBlock().getRelative(BlockFace.UP)))) {
             
-            final Gate gate = this.plugin.searchGate(event.getClickedBlock());
+            event.setCancelled(true);
             
-            if ((gate != null) && (this.plugin.getGate(event.getClickedBlock()) == null) && (gate.getGateBlocks().contains(event.getClickedBlock()) || gate.getSolidBlocks().contains(event.getClickedBlock()) || gate.getGateBlocks().contains(event.getClickedBlock().getRelative(BlockFace.UP)) || gate.getSolidBlocks().contains(event.getClickedBlock().getRelative(BlockFace.UP)))) {
+            if (this.plugin.getConfig().getBoolean("debug")) {
                 
-                event.setCancelled(true);
+                event.getPlayer().sendMessage("§cThis block is protected as it's part of a gate.");
                 
-                if (this.plugin.getConfig().getBoolean("debug")) {
-                    
-                    event.getPlayer().sendMessage("§cThis block is protected as it's part of a gate.");
-                    
-                }
+            }
+            
+            if (this.plugin.getConfig().getBoolean("console-log")) {
                 
-                if (this.plugin.getConfig().getBoolean("console-log")) {
+                this.plugin.getLogger().log(Level.INFO, String.format("%s tried to damage a gate block %s, but was denied", event.getPlayer(), String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
+                
+            }
+            
+        }
+        
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onGateProtectPlace(final BlockPlaceEvent event) {
+    
+        if (event.isCancelled()) { return; }
+        
+        Gate gate = this.plugin.searchGate(event.getBlock().getRelative(BlockFace.UP));
+        Block block = event.getBlock().getRelative(BlockFace.DOWN);
+        
+        while ((gate == null) && (Gates.blocks.contains((block = block.getRelative(BlockFace.UP)).getType()) || (Gates.blocks.contains(event.getBlock().getType()) && block.equals(event.getBlock())) || Gates.empty.contains(block.getType()))) {
+            
+            for (int x = block.getX() - 1; (gate == null) && (x <= (block.getX() + 1)); x++) {
+                
+                for (int z = block.getZ() - 1; (gate == null) && (z <= (block.getZ() + 1)); z++) {
                     
-                    this.plugin.getLogger().log(Level.INFO, String.format("%s tried to damage a gate block %s, but was denied", event.getPlayer(), String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
+                    gate = this.plugin.searchGate(block.getWorld().getBlockAt(x, block.getY(), z));
                     
                 }
                 
             }
             
-        } else if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+        }
+        
+        if (Gates.blocks.contains(event.getBlock().getType())) {
             
-            final Block block = event.getClickedBlock().getRelative(event.getBlockFace());
             final int radius = this.plugin.getConfig().getInt("search-radius");
-            Gate gate = this.plugin.searchGate(block);
-            boolean finished = false;
             
-            if (Gates.blocks.contains(block.getType())) {
+            for (int x = event.getBlock().getX() - radius; (gate == null) && (x <= (event.getBlock().getX() + radius)); x++) {
                 
-                for (int x = block.getX() - radius; x <= (block.getX() + radius); x++) {
+                for (int y = event.getBlock().getY() - radius; (gate == null) && (y <= (event.getBlock().getY() + radius)); y++) {
                     
-                    for (int y = block.getY() - radius; y <= (block.getY() + radius); y++) {
+                    for (int z = event.getBlock().getZ() - radius; (gate == null) && (z <= (event.getBlock().getZ() + radius)); z++) {
                         
-                        for (int z = block.getZ() - radius; z <= (block.getZ() + radius); z++) {
-                            
-                            final Block blockA = block.getWorld().getBlockAt(x, y, z);
-                            gate = this.plugin.getGate(blockA);
-                            
-                            if ((gate == null) && Gates.blocks.contains(blockA.getType()) && (x <= (block.getX() + 1)) && (x >= (block.getX() - 1)) && (y <= (block.getY() + 1)) && (y >= (block.getY() - 1)) && (z <= (block.getZ() + 1)) && (z >= (block.getZ() - 1))) {
-                                
-                                gate = this.plugin.searchGate(blockA);
-                                
-                            } else {
-                                
-                                Block blockB = blockA.getRelative(BlockFace.DOWN);
-                                
-                                while (Gates.blocks.contains((blockB = blockB.getRelative(BlockFace.UP)).getType()) || Gates.empty.contains(blockB.getType())) {
-                                    
-                                    for (int xA = blockB.getX() - radius; xA <= (blockB.getX() + radius); xA++) {
-                                        
-                                        for (int zA = blockB.getZ() - radius; zA <= (blockB.getZ() + radius); zA++) {
-                                            
-                                            final Block blockC = blockB.getWorld().getBlockAt(xA, blockB.getY(), zA);
-                                            
-                                            gate = this.plugin.searchGate(blockC);
-                                            
-                                            if (gate != null) {
-                                                
-                                                finished = true;
-                                                break;
-                                                
-                                            }
-                                            
-                                        }
-                                        
-                                        if (finished) {
-                                            
-                                            break;
-                                            
-                                        }
-                                        
-                                    }
-                                    
-                                    if (finished) {
-                                        
-                                        break;
-                                        
-                                    }
-                                    
-                                }
-                                
-                            }
-                            
-                            if (gate != null) {
-                                
-                                finished = true;
-                                break;
-                                
-                            }
-                            
-                        }
-                        
-                        if (finished) {
-                            
-                            break;
-                            
-                        }
-                        
-                    }
-                    
-                    if (finished) {
-                        
-                        break;
+                        gate = this.plugin.getGate(event.getBlock().getWorld().getBlockAt(x, y, z));
                         
                     }
                     
@@ -140,21 +90,21 @@ public class GateProtectionListener implements Listener {
                 
             }
             
-            if (gate != null) {
+        }
+        
+        if (gate != null) {
+            
+            event.setCancelled(true);
+            
+            if (this.plugin.getConfig().getBoolean("debug")) {
                 
-                event.setCancelled(true);
+                event.getPlayer().sendMessage("§cThis block is protected as it's part of a gate.");
                 
-                if (this.plugin.getConfig().getBoolean("debug")) {
-                    
-                    event.getPlayer().sendMessage("§cThis block is protected as it's part of a gate.");
-                    
-                }
+            }
+            
+            if (this.plugin.getConfig().getBoolean("console-log")) {
                 
-                if (this.plugin.getConfig().getBoolean("console-log")) {
-                    
-                    this.plugin.getLogger().log(Level.INFO, String.format("%s tried to damage a gate block %s, but was denied", event.getPlayer(), String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
-                    
-                }
+                this.plugin.getLogger().log(Level.INFO, String.format("%s tried to damage a gate block %s, but was denied", event.getPlayer(), String.format("(GATE SIGN x%s y%s z%s)", gate.getSign().getX(), gate.getSign().getY(), gate.getSign().getZ())));
                 
             }
             

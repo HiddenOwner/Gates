@@ -79,35 +79,23 @@ public class Gate {
                 
             }
             
-            this.solidBlocks.removeAll(blocks);
-            
         }
         
     }
     
     private void searchBlocks(final Block block, final int radius, final boolean origin) {
     
-        for (int x = block.getX() - radius; x <= (block.getX() + radius); x++) {
+        final int maximumSize = this.plugin.getConfig().getInt("maximum-size");
+        
+        for (int x = block.getX() - radius; (this.solidBlocks.size() < maximumSize) && (x <= (block.getX() + radius)); x++) {
             
-            for (int y = block.getY() - radius; y <= (block.getY() + radius); y++) {
+            for (int y = block.getY() - radius; (this.solidBlocks.size() < maximumSize) && (y <= (block.getY() + radius)); y++) {
                 
-                for (int z = block.getZ() - radius; z <= (block.getZ() + radius); z++) {
+                for (int z = block.getZ() - radius; (this.solidBlocks.size() < maximumSize) && (z <= (block.getZ() + radius)); z++) {
                     
-                    final Block blockA = block.getWorld().getBlockAt(x, y, z);
+                    Block blockA = block.getWorld().getBlockAt(x, y, z);
                     
-                    if (this.solidBlocks.contains(blockA)) {
-                        
-                        continue;
-                        
-                    }
-                    
-                    if (Gates.blocks.contains(blockA.getType())) {
-                        
-                        if (this.material == null) {
-                            
-                            this.material = blockA.getType();
-                            
-                        }
+                    if (((this.material != null) && this.material.equals(blockA.getType())) || Gates.blocks.contains(blockA.getType())) {
                         
                         if ((this.solidBlocks.size() > 1) && !this.plugin.getConfig().getBoolean("branches") && !(((this.solidBlocks.get(0).getX() == x) && (this.solidBlocks.get(1).getX() == x)) || ((this.solidBlocks.get(0).getZ() == z) && (this.solidBlocks.get(1).getZ() == z)))) {
                             
@@ -115,14 +103,26 @@ public class Gate {
                             
                         }
                         
-                    }
-                    
-                    if ((this.material != null) && this.material.equals(blockA.getType())) {
+                        if (this.material == null) {
+                            
+                            this.material = blockA.getType();
+                            
+                        }
                         
-                        this.solidBlocks.add(blockA);
-                        this.searchBlocks(blockA, 1, false);
+                        while (this.material.equals(blockA.getRelative(BlockFace.UP).getType())) {
+                            
+                            blockA = blockA.getRelative(BlockFace.UP);
+                            
+                        }
                         
-                        if (origin) { return; }
+                        if (!this.solidBlocks.contains(blockA)) {
+                            
+                            this.solidBlocks.add(blockA);
+                            this.searchBlocks(blockA, 1, false);
+                            
+                            if (origin) { return; }
+                            
+                        }
                         
                     }
                     
