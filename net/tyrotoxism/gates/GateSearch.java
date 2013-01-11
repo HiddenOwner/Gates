@@ -51,14 +51,22 @@ public class GateSearch {
     
     private void searchGate() {
     
-        Block blockA = this.orginalBlock.getRelative(BlockFace.DOWN);
+        Block block = this.orginalBlock.getRelative(BlockFace.DOWN);
         
-        while (Gates.blocks.contains((blockA = blockA.getRelative(BlockFace.UP)).getType()) || Gates.empty.contains(blockA.getType())) {
+        while (Gates.blocks.contains((block = block.getRelative(BlockFace.UP)).getType()) || Gates.empty.contains(block.getType())) {
             
-            if (Gates.blocks.contains(blockA.getType())) {
+            for (int x = block.getX() - 1; x <= (block.getX() + 1); x++) {
                 
-                this.material = blockA.getType();
-                this.searchGateBlocks(blockA, 1);
+                for (int z = block.getZ() - 1; z <= (block.getZ() + 1); z++) {
+                    
+                    if (Gates.blocks.contains(block.getType())) {
+                        
+                        this.material = block.getType();
+                        this.searchGateBlocks(block, 0);
+                        
+                    }
+                    
+                }
                 
             }
             
@@ -66,17 +74,17 @@ public class GateSearch {
         
         final int radius = this.plugin.getConfig().getInt("search-radius");
         
-        for (final Block blockB : this.blocks) {
+        for (final Block blockA : this.blocks) {
             
-            for (int x = blockB.getX() - radius; x <= (blockB.getX() + radius); x++) {
+            for (int x = blockA.getX() - radius; x <= (blockA.getX() + radius); x++) {
                 
-                for (int y = blockB.getY() - radius; y <= (blockB.getY() + radius); y++) {
+                for (int y = blockA.getY() - radius; y <= (blockA.getY() + radius); y++) {
                     
-                    for (int z = blockB.getZ() - radius; z <= (blockB.getZ() + radius); z++) {
+                    for (int z = blockA.getZ() - radius; z <= (blockA.getZ() + radius); z++) {
                         
-                        this.gate = this.plugin.getGate(blockB.getWorld().getBlockAt(x, y, z));
+                        this.gate = this.plugin.getGate(blockA.getWorld().getBlockAt(x, y, z));
                         
-                        if ((this.gate != null) && (this.gate.getGateBlocks().contains(blockB) || this.gate.getSolidBlocks().contains(blockB))) { return; }
+                        if ((this.gate != null) && (this.gate.getGateBlocks().contains(blockA) || this.gate.getSolidBlocks().contains(blockA))) { return; }
                         
                     }
                     
