@@ -1,8 +1,6 @@
 Gates
 =======
 
-More information will come… Until then, enjoy this cat.
-
                                                    .--.
                                                    `.  \
                                                      \  \

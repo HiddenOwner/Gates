@@ -36,6 +36,8 @@ public class Gates extends JavaPlugin {
     @Override
     public void onEnable() {
     
+        this.getCommand("gates").setExecutor(new GateCommand(this));
+        
         this.types = new ArrayList<GateType>();
         
         this.getDataFolder().mkdirs();

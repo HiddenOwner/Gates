@@ -4,3 +4,10 @@ author: Tyrotoxism
 website: http://tyrotoxism.net
 version: 2.0a
 description: Gates for your Bukkit server
+commands:
+    gates:
+        description: Used to modify gate signs to your liking
+        usage: |
+            /<command> owner <player>
+            /<command> type <type>
+            /<command> redstone <ON|OFF|TOGGLE>
