@@ -1,6 +1,7 @@
 This plugin was originally created by Tyrotoxism and updated to current version by HiddenOwner Geekz Multimedia
 
 commands:
+
     gates:
         description: Used to modify gate signs to your liking
         usage: |
@@ -8,6 +9,7 @@ commands:
             /gates type <type>
             /gates redstone <ON|OFF|TOGGLE>
 permissions:
+
     gates.player:
         description: Default gate permissions
             children:
