@@ -1,13 +1,14 @@
 name: Gates
-main: net.tyrotoxism.gates.Gates
-author: Tyrotoxism
-website: http://tyrotoxism.net
-version: 2.0a
+main: com.geekzmultimedia.gates.Gates
+author: Tyrotoxism ,HiddenOwner, Geekz Multimedia
+website: www.geekzmultimedia.com
+version: 2.1beta
 description: Gates for your Bukkit server
 commands:
     gates:
         description: Used to modify gate signs to your liking
         usage: |
-            /<command> owner <player>
-            /<command> type <type>
-            /<command> redstone <ON|OFF|TOGGLE>
+            /gates owner <player>
+            /gates type <type>
+            /gates redstone <ON|OFF|TOGGLE> 
+       

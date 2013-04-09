@@ -212,36 +212,6 @@ public class Gate {
         
     }
     
-    public boolean hasPermissionToModify(final Player player) {
-    
-        if (!this.plugin.getConfig().getBoolean("permissions")) {
-            
-            return true;
-            
-        } else if (player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.modify.*")) {
-            
-            return true;
-            
-        } else if (player.hasPermission("gates.modify.player.*") || player.hasPermission(String.format("gates.modify.player.%s", this.owner.getName().toLowerCase()))) {
-            
-            return true;
-            
-        } else if (player.hasPermission("gates.modify.type.*") || player.hasPermission(String.format("gates.modify.type.%s", this.type.getName().toLowerCase()))) {
-            
-            return true;
-            
-        } else if ((player.equals(this.owner) && player.hasPermission("gates.modify.self")) || (!player.equals(this.owner) && player.hasPermission("gates.modify.others"))) {
-            
-            return true;
-            
-        } else {
-            
-            return false;
-            
-        }
-        
-    }
-    
     public boolean hasPermissionToDestroy(final Player player) {
     
         if (!this.plugin.getConfig().getBoolean("permissions")) {
