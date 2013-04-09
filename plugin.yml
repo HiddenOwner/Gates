@@ -11,4 +11,3 @@ commands:
             /gates owner <player>
             /gates type <type>
             /gates redstone <ON|OFF|TOGGLE> 
-            /n
