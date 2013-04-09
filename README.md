@@ -48,3 +48,4 @@ permissions:
                 gates.destroy.type.<type>: gives player permission to destroy defined types of gates (ex. redstone)
                 gates.destroy.self: gives player permission to destroy their own gates
                 gates.destroy.others: gives players permission to destroy other peoples gates
+/n

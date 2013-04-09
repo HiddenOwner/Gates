@@ -1,4 +1,4 @@
-package com.geekzmultimedia.gates;
+package net.tyrotoxism.gates;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

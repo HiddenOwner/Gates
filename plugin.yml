@@ -1,7 +1,7 @@
 name: Gates
-main: com.geekzmultimedia.gates.Gates
+main: net.tyrotoxism.gates.Gates
 author: Tyrotoxism ,HiddenOwner, Geekz Multimedia
-website: www.geekzmultimedia.com
+website: www.GeekzMultimedia.com, www.Tyrotoxism.net
 version: 2.1beta
 description: Gates for your Bukkit server
 commands:
@@ -11,4 +11,4 @@ commands:
             /gates owner <player>
             /gates type <type>
             /gates redstone <ON|OFF|TOGGLE> 
-       
+            /n

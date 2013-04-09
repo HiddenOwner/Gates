@@ -178,7 +178,7 @@ public class Gate {
     
     public boolean hasPermissionToCreate(final Player player) {
     
-        return !this.plugin.getConfig().getBoolean("permissions") || player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.create");
+        return !this.plugin.getConfig().getBoolean("permissions") || player.hasPermission("*") || player.hasPermission("gates.all") || player.hasPermission("gates.create")|| player.hasPermission("gates.player");
         
     }
     
@@ -188,19 +188,49 @@ public class Gate {
             
             return true;
             
-        } else if (player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.use.*")) {
+        } else if (player.hasPermission("*") || player.hasPermission("gates.all") || player.hasPermission("gates.use.all")) {
             
             return true;
             
-        } else if (player.hasPermission("gates.use.player.*") || player.hasPermission(String.format("gates.use.player.%s", this.owner.getName().toLowerCase()))) {
+        } else if (player.hasPermission("gates.use.player.all") || player.hasPermission(String.format("gates.use.player.%s", this.owner.getName().toLowerCase()))) {
             
             return true;
             
-        } else if (player.hasPermission("gates.use.type.*") || player.hasPermission(String.format("gates.use.type.%s", this.type.getName().toLowerCase()))) {
+        } else if (player.hasPermission("gates.use.type.all") || player.hasPermission(String.format("gates.use.type.%s", this.type.getName().toLowerCase()))) {
             
             return true;
             
-        } else if ((player.equals(this.owner) && player.hasPermission("gates.use.self")) || (!player.equals(this.owner) && player.hasPermission("gates.use.others"))) {
+        } else if ((player.equals(this.owner) && player.hasPermission("gates.use.self")) || (player.equals(this.owner) && player.hasPermission("gates.player")) || (!player.equals(this.owner) && player.hasPermission("gates.use.others"))) {
+            
+            return true;
+            
+        } else {
+            
+            return false;
+            
+        }
+        
+    }
+    
+    public boolean hasPermissionToModify(final Player player) {
+    
+        if (!this.plugin.getConfig().getBoolean("permissions")) {
+            
+            return true;
+            
+        } else if (player.hasPermission("*") || player.hasPermission("gates.all") || player.hasPermission("gates.modify.all")) {
+            
+            return true;
+            
+        } else if (player.hasPermission("gates.modify.player.all") || player.hasPermission(String.format("gates.modify.player.%s", this.owner.getName().toLowerCase()))) {
+            
+            return true;
+            
+        } else if (player.hasPermission("gates.modify.type.all") || player.hasPermission(String.format("gates.modify.type.%s", this.type.getName().toLowerCase()))) {
+            
+            return true;
+            
+        } else if ((player.equals(this.owner) && player.hasPermission("gates.modify.self")) || (player.equals(this.owner) && player.hasPermission("gates.player")) || (!player.equals(this.owner) && player.hasPermission("gates.modify.others"))) {
             
             return true;
             
@@ -218,19 +248,19 @@ public class Gate {
             
             return true;
             
-        } else if (player.hasPermission("*") || player.hasPermission("gates.*") || player.hasPermission("gates.destroy.*")) {
+        } else if (player.hasPermission("*") || player.hasPermission("gates.all") || player.hasPermission("gates.destroy.all")) {
             
             return true;
             
-        } else if (player.hasPermission("gates.destroy.player.*") || player.hasPermission(String.format("gates.destroy.player.%s", this.owner.getName().toLowerCase()))) {
+        } else if (player.hasPermission("gates.destroy.player.all") || player.hasPermission(String.format("gates.destroy.player.%s", this.owner.getName().toLowerCase()))) {
             
             return true;
             
-        } else if (player.hasPermission("gates.destroy.type.*") || player.hasPermission(String.format("gates.destroy.type.%s", this.type.getName().toLowerCase()))) {
+        } else if (player.hasPermission("gates.destroy.type.all") || player.hasPermission(String.format("gates.destroy.type.%s", this.type.getName().toLowerCase()))) {
             
             return true;
             
-        } else if ((player.equals(this.owner) && player.hasPermission("gates.destroy.self")) || (!player.equals(this.owner) && player.hasPermission("gates.destroy.others"))) {
+        } else if ((player.equals(this.owner) && player.hasPermission("gates.destroy.self")) || (player.equals(this.owner) && player.hasPermission("gates.player")) || (!player.equals(this.owner) && player.hasPermission("gates.destroy.others"))) {
             
             return true;
             
