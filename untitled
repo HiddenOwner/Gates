@@ -2,7 +2,7 @@ name: Gates
 main: net.tyrotoxism.gates.Gates
 author: Tyrotoxism ,HiddenOwner, Geekz Multimedia
 website: www.GeekzMultimedia.com, www.Tyrotoxism.net
-version: 2.2a
+version: 2.1beta
 description: Gates for your Bukkit server
 commands:
     gates:
