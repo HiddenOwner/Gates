@@ -16,7 +16,8 @@ public class GateCommand implements CommandExecutor {
         
     }
     
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
     
         if (!(sender instanceof Player)) {
@@ -27,7 +28,7 @@ public class GateCommand implements CommandExecutor {
         }
         
         final Player player = (Player) sender;
-        final Gate gate = this.plugin.getGate(player.getTargetBlock(null, 16));
+		final Gate gate = this.plugin.getGate(player.getTargetBlock(null, 16));
         
         if (gate == null) {
             

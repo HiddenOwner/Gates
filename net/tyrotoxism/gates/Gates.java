@@ -34,8 +34,8 @@ public class Gates extends JavaPlugin {
     private List<GateType> types;
     
     @Override
-    public void onEnable() {
-    
+    public void onEnable() {   
+    	
         this.getCommand("gates").setExecutor(new GateCommand(this));
         
         this.types = new ArrayList<GateType>();
