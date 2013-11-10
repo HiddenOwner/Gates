@@ -46,7 +46,14 @@ public class GateCommand implements CommandExecutor {
         
         try {
             
-            if (args[0].equals("owner")) {
+        	if(args.length==0){
+        		if (gate.isOpen()==true){
+        			gate.close();
+        		} else{
+        			gate.open();
+        		}
+     
+        	} else if (args[0].equals("owner")) {
                 
                 gate.getSign().setLine(1, args[1]);
                 gate.getSign().update();
